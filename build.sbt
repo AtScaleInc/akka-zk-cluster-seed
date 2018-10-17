@@ -1,9 +1,13 @@
 import com.typesafe.sbt.SbtMultiJvm
 import com.typesafe.sbt.SbtMultiJvm.MultiJvmKeys.MultiJvm
 
+
+resolvers += "ext-release-local" at "http://artifactory.infra.atscale.com/ext-release-local"
+
+
 organization := "com.sclasen"
 name := "akka-zk-cluster-seed"
-version := "0.1.10"
+version := "0.1.10.1"
 
 scalaVersion := "2.12.4"
 crossScalaVersions := Seq(scalaVersion.value, "2.11.11")
@@ -25,7 +29,7 @@ val exhibitorOptionalDependencies = Seq(
   "com.typesafe.akka" %% "akka-http-spray-json" % akkaHttpVersion
 ).map(_ % Provided)
 
-val curatorVersion = "2.12.0"
+val curatorVersion = "2.12.0.1"
 
 val zkDependencies = Seq(
   "curator-framework",
