@@ -1,9 +1,7 @@
 import com.typesafe.sbt.SbtMultiJvm
 import com.typesafe.sbt.SbtMultiJvm.MultiJvmKeys.MultiJvm
 
-
-resolvers += "ext-release-local" at "http://artifactory.infra.atscale.com/ext-release-local"
-
+resolvers += "release-local" at "http://localhost:8081/artifactory/libs-release-local"
 
 organization := "com.sclasen"
 name := "akka-zk-cluster-seed"
