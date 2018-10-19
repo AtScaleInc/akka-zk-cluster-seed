@@ -27,7 +27,7 @@ val exhibitorOptionalDependencies = Seq(
   "com.typesafe.akka" %% "akka-http-spray-json" % akkaHttpVersion
 ).map(_ % Provided)
 
-val curatorVersion = "2.12.0.1"
+val curatorVersion = "2.12.0.3"
 
 val zkDependencies = Seq(
   "curator-framework",
