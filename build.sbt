@@ -1,9 +1,11 @@
 import com.typesafe.sbt.SbtMultiJvm
 import com.typesafe.sbt.SbtMultiJvm.MultiJvmKeys.MultiJvm
 
+val buildNumber = sys.env.get("BUILD_NUMBER").getOrElse("0-SNAPSHOT")
+
 organization := "com.atscale.engine.akka-zk"
 name := "akka-zk-cluster-seed"
-version := "0.1.10.1"
+version := s"0.1.10.${buildNumber}"
 
 scalaVersion := "2.12.7"
 crossScalaVersions := Seq(scalaVersion.value, "2.11.11")
