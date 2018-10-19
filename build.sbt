@@ -1,15 +1,15 @@
 import com.typesafe.sbt.SbtMultiJvm
 import com.typesafe.sbt.SbtMultiJvm.MultiJvmKeys.MultiJvm
 
-organization := "com.sclasen"
+organization := "com.atscale.engine.akka-zk"
 name := "akka-zk-cluster-seed"
-version := "0.1.10"
+version := "0.1.10.1"
 
-scalaVersion := "2.12.4"
+scalaVersion := "2.12.7"
 crossScalaVersions := Seq(scalaVersion.value, "2.11.11")
 
-val akkaVersion = "2.5.9"
-val akkaHttpVersion = "10.0.11"
+val akkaVersion = "2.5.17"
+val akkaHttpVersion = "10.1.5"
 
 val akkaDependencies = Seq(
   "com.typesafe.akka" %% "akka-actor" % akkaVersion,
@@ -25,13 +25,13 @@ val exhibitorOptionalDependencies = Seq(
   "com.typesafe.akka" %% "akka-http-spray-json" % akkaHttpVersion
 ).map(_ % Provided)
 
-val curatorVersion = "2.12.0"
+val curatorVersion = "2.12.0.1"
 
 val zkDependencies = Seq(
   "curator-framework",
   "curator-recipes"
 ).map { 
-  "org.apache.curator" % _ % curatorVersion exclude("log4j", "log4j") exclude("org.slf4j", "slf4j-log4j12")
+  "com.atscale.engine.curator" % _ % curatorVersion exclude("log4j", "log4j") exclude("org.slf4j", "slf4j-log4j12")
 }
   
 
@@ -44,11 +44,12 @@ val testDependencies = Seq(
   "com.typesafe.akka" %% "akka-slf4j" % akkaVersion,
   "org.slf4j" % "log4j-over-slf4j" % "1.7.7",
   "ch.qos.logback" % "logback-classic" % "1.1.2",
-  "org.apache.curator" % "curator-test" % curatorVersion
+  "com.atscale.engine.curator" % "curator-test" % curatorVersion
 ).map(_ % Test)
 
 lazy val rootProject = (project in file(".")).
   settings(
+    resolvers += "atscale-releases"  at "http://artifactory.infra.atscale.com/release-local",
     libraryDependencies ++= (akkaDependencies ++ exhibitorOptionalDependencies ++ zkDependencies ++ testDependencies),
     scalacOptions in Compile ++= Seq("-encoding", "UTF-8", "-deprecation", "-feature", "-unchecked", "-Xlog-reflective-calls", "-Xlint", "-language:postfixOps"),
     javacOptions in Compile ++= Seq("-Xlint:unchecked", "-Xlint:deprecation"),
@@ -73,14 +74,7 @@ lazy val rootProject = (project in file(".")).
           <name>Scott Clasen</name>
           <url>http://github.com/sclasen</url>
         </developer>
-      </developers>),
-
-    publishTo := {
-      val v = version.value
-      val nexus = "https://oss.sonatype.org/"
-      if (v.trim.endsWith("SNAPSHOT")) Some("snapshots" at nexus + "content/repositories/snapshots")
-      else Some("releases" at nexus + "service/local/staging/deploy/maven2")
-    }
+      </developers>)
   ).
   settings(Defaults.itSettings:_*).
   settings(SbtMultiJvm.multiJvmSettings:_*).
