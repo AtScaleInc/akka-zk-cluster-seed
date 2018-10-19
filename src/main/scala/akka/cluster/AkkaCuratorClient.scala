@@ -10,6 +10,7 @@ object AkkaCuratorClient {
     val curatorBuilder = CuratorFrameworkFactory.builder()
       .connectString(connStr)
       .retryPolicy(retryPolicy)
+      .dontUseZooKeeperSaslClient()
 
     settings.ZKAuthorization match {
       case Some((scheme, auth)) => curatorBuilder.authorization(scheme, auth.getBytes)

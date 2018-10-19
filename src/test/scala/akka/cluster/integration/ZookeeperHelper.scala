@@ -48,6 +48,7 @@ object ZookeeperHelper {
     val client = CuratorFrameworkFactory.builder()
       .connectString(server.getConnectString)
       .retryPolicy(new RetryOneTime(1000))
+      .dontUseZooKeeperSaslClient()
       .build()
     client.start()
     client
