@@ -101,11 +101,11 @@ class ZookeeperClusterSeed(system: ExtendedActorSystem) extends Extension {
     @tailrec
     def waitForLeaderChange(times: Int, delay: Int)(removedAddress: String): Either[Unit, Unit] =
       latch.getLeader.getId.equals(removedAddress) match {
-        case false => Left(null)
+        case false => Left(())
         case _ if times > 0 =>
           Thread.sleep(delay)
           waitForLeaderChange(times - 1, delay)(removedAddress)
-        case _ => Right(null)
+        case _ => Right(())
       }
 
     val pathCache = new PathChildrenCache(client, path, true)
