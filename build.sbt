@@ -5,13 +5,13 @@ val buildNumber = sys.env.get("BUILD_NUMBER").getOrElse("0-SNAPSHOT")
 
 organization := "com.atscale.engine.akka-zk"
 name := "akka-zk-cluster-seed"
-version := s"0.1.10.${buildNumber}"
+version := s"0.1.11.${buildNumber}"
 
-scalaVersion := "2.12.7"
-crossScalaVersions := Seq(scalaVersion.value, "2.11.11")
+scalaVersion := "2.13.0"
+crossScalaVersions := Seq(scalaVersion.value, "2.11.12", "2.12.8")
 
-val akkaVersion = "2.5.17"
-val akkaHttpVersion = "10.1.5"
+val akkaVersion = "2.5.25"
+val akkaHttpVersion = "10.1.9"
 
 val akkaDependencies = Seq(
   "com.typesafe.akka" %% "akka-actor" % akkaVersion,
@@ -32,24 +32,26 @@ val curatorVersion = "2.12.0.3"
 val zkDependencies = Seq(
   "curator-framework",
   "curator-recipes"
-).map { 
+).map {
   "com.atscale.engine.curator" % _ % curatorVersion exclude("log4j", "log4j") exclude("org.slf4j", "slf4j-log4j12")
 }
-  
+
 
 val testDependencies = Seq(
   "com.typesafe.akka" %% "akka-testkit" % akkaVersion,
   "com.typesafe.akka" %% "akka-actor" % akkaVersion,
   "com.typesafe.akka" %% "akka-cluster" % akkaVersion,
-  "org.scalatest" %% "scalatest" % "3.0.1",
+  "org.scalatest" %% "scalatest" % "3.0.8",
   "com.typesafe.akka" %% "akka-multi-node-testkit" % akkaVersion,
   "com.typesafe.akka" %% "akka-slf4j" % akkaVersion,
-  "org.slf4j" % "log4j-over-slf4j" % "1.7.7",
-  "ch.qos.logback" % "logback-classic" % "1.1.2",
+  "org.slf4j" % "log4j-over-slf4j" % "1.7.28",
+  "ch.qos.logback" % "logback-classic" % "1.2.3",
   "com.atscale.engine.curator" % "curator-test" % curatorVersion
 ).map(_ % Test)
 
 lazy val rootProject = (project in file(".")).
+  enablePlugins(MultiJvmPlugin).
+  configs(MultiJvm).
   settings(
     resolvers += "atscale-releases"  at "http://artifactory.infra.atscale.com/release-local",
     libraryDependencies ++= (akkaDependencies ++ exhibitorOptionalDependencies ++ zkDependencies ++ testDependencies),
@@ -80,16 +82,16 @@ lazy val rootProject = (project in file(".")).
   ).
   settings(Defaults.itSettings:_*).
   settings(SbtMultiJvm.multiJvmSettings:_*).
-  settings(compile in MultiJvm <<= (compile in MultiJvm) triggeredBy (compile in IntegrationTest)).
-  settings(executeTests in IntegrationTest <<= (executeTests in Test, executeTests in MultiJvm) map {
-    case (testResults, multiNodeResults)  =>
-      val overall =
-        if (testResults.overall.id < multiNodeResults.overall.id)
-          multiNodeResults.overall
-        else
-          testResults.overall
-      Tests.Output(overall,
-        testResults.events ++ multiNodeResults.events,
-        testResults.summaries ++ multiNodeResults.summaries)
-  }).
+  // settings(compile in MultiJvm := (compile in MultiJvm) triggeredBy (compile in IntegrationTest)).
+  // settings(executeTests in IntegrationTest := (executeTests in Test, executeTests in MultiJvm) map {
+  //   case (testResults, multiNodeResults)  =>
+  //     val overall =
+  //       if (testResults.overall.id < multiNodeResults.overall.id)
+  //         multiNodeResults.overall
+  //       else
+  //         testResults.overall
+  //     Tests.Output(overall,
+  //       testResults.events ++ multiNodeResults.events,
+  //       testResults.summaries ++ multiNodeResults.summaries)
+  // }).
   configs(IntegrationTest, MultiJvm)

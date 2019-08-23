@@ -8,9 +8,10 @@ import scala.concurrent.Await
 import concurrent.duration._
 import scala.util.Try
 
-class ZookeeperClusterSeedSettings(system: ActorSystem,
-                                   settingsRoot: String = "akka.cluster.seed.zookeeper",
-                                   overwrittenActorSettings: Option[Config] = None) {
+class ZookeeperClusterSeedSettings(
+  system: ActorSystem,
+  settingsRoot: String = "akka.cluster.seed.zookeeper",
+  overwrittenActorSettings: Option[Config] = None) {
 
   private val zc = overwrittenActorSettings.getOrElse(system.settings.config).getConfig(settingsRoot)
 
@@ -39,7 +40,7 @@ class ZookeeperClusterSeedSettings(system: ActorSystem,
 
   val autoDownMaxWait: Duration = Try(Duration(zc.getString("auto-down.wait-for-leader"))).getOrElse(Duration("5 seconds"))
 
-  val autoDownUnresolvedStrategy: String = Try(zc.getString("auto-down.unresolved-strategy")).map{strategy =>
+  val autoDownUnresolvedStrategy: String = Try(zc.getString("auto-down.unresolved-strategy")).map { strategy =>
     if (!strategy.equals(AutoDownUnresolvedStrategies.Log) && !strategy.equals(AutoDownUnresolvedStrategies.ForceDown)) {
       system.log.warning("component=zookeeper-cluster-settings at=config-resolve auto-down.unresolved-strateg uses " +
         s"unrecognised value {} while the valid values are [${AutoDownUnresolvedStrategies.ForceDown}, ${AutoDownUnresolvedStrategies.Log}]. " +
