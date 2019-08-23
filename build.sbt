@@ -49,11 +49,15 @@ val testDependencies = Seq(
   "com.atscale.engine.curator" % "curator-test" % curatorVersion
 ).map(_ % Test)
 
+val asReleases = "Artifactory Realm" at "http://artifactory.infra.atscale.com/release-local"
+
 lazy val rootProject = (project in file(".")).
   enablePlugins(MultiJvmPlugin).
   configs(MultiJvm).
   settings(
-    resolvers += "atscale-releases"  at "http://artifactory.infra.atscale.com/release-local",
+    publishTo := Some(asReleases),
+    resolvers += asReleases,
+
     libraryDependencies ++= (akkaDependencies ++ exhibitorOptionalDependencies ++ zkDependencies ++ testDependencies),
     scalacOptions in Compile ++= Seq("-encoding", "UTF-8", "-deprecation", "-feature", "-unchecked", "-Xlog-reflective-calls", "-Xlint", "-language:postfixOps"),
     javacOptions in Compile ++= Seq("-Xlint:unchecked", "-Xlint:deprecation"),
